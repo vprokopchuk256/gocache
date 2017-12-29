@@ -1,11 +1,12 @@
 package gcitem
 
-func Parse(value string) (Item, bool) {
-	i, ok := ParseInteger(value)
+import "fmt"
 
-	if ok {
-		return i, true
+func Parse(value string) (Item, error) {
+	i, err := ParseInteger(value)
+	if err != nil {
+		return nil, fmt.Errorf("could not parse value %v: %v", value, err)
 	}
 
-	return nil, false
+	return i, nil
 }

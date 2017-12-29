@@ -7,9 +7,7 @@ import (
 )
 
 func TestIntegerNew(t *testing.T) {
-	i := gcitem.NewInteger(10)
-
-	if i.Value() != "10" {
+	if i := gcitem.NewInteger(10); i.Value() != "10" {
 		t.Error("Initially integer value is expected to be set in construction")
 	}
 }
@@ -25,17 +23,15 @@ func TestIntegerInc(t *testing.T) {
 }
 
 func TestIntegerShow(t *testing.T) {
-	i := gcitem.NewInteger(10)
-
-	if i.String() != "(integer) 10" {
+	if i := gcitem.NewInteger(10); i.String() != "(integer) 10" {
 		t.Error("Is expected to has correct display value")
 	}
 }
 
 func TestIntegerParse(t *testing.T) {
-	i, ok := gcitem.ParseInteger("10")
+	i, err := gcitem.ParseInteger("10")
 
-	if !ok {
+	if err != nil {
 		t.Error("It should successfully parse corrent integer value")
 	}
 
@@ -45,9 +41,9 @@ func TestIntegerParse(t *testing.T) {
 }
 
 func TestIntegerParseSpaces(t *testing.T) {
-	i, ok := gcitem.ParseInteger(" 10 ")
+	i, err := gcitem.ParseInteger(" 10 ")
 
-	if !ok {
+	if err != nil {
 		t.Error("It should successfully parse corrent integer value and ignore leading and trailing spaces")
 	}
 
@@ -57,17 +53,13 @@ func TestIntegerParseSpaces(t *testing.T) {
 }
 
 func TestIntegerParseSpacesOnly(t *testing.T) {
-	_, ok := gcitem.ParseInteger(" ")
-
-	if ok {
+	if _, err := gcitem.ParseInteger(" "); err == nil {
 		t.Error("It should not parse empty string")
 	}
 }
 
 func TestIntegerParseInvalidSpaces(t *testing.T) {
-	_, ok := gcitem.ParseInteger("aa")
-
-	if ok {
+	if _, err := gcitem.ParseInteger("aa"); err == nil {
 		t.Error("It should not parse non digits")
 	}
 }

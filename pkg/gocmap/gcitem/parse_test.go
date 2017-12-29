@@ -7,9 +7,9 @@ import (
 )
 
 func TestParseInteger(t *testing.T) {
-	i, ok := gcitem.Parse("10")
+	i, err := gcitem.Parse("10")
 
-	if !ok {
+	if err != nil {
 		t.Error("Integer value is expected to be parsed successfully")
 	}
 
@@ -19,9 +19,7 @@ func TestParseInteger(t *testing.T) {
 }
 
 func TestParseUndefined(t *testing.T) {
-	_, ok := gcitem.Parse("aaa")
-
-	if ok {
+	if _, err := gcitem.Parse("aaa"); err == nil {
 		t.Error("Undefined value should not be parsed successfully")
 	}
 }

@@ -15,14 +15,14 @@ func NewInteger(value int) *Integer {
 	return &Integer{base(), value}
 }
 
-func ParseInteger(value string) (*Integer, bool) {
+func ParseInteger(value string) (*Integer, error) {
 	v, err := strconv.Atoi(strings.TrimSpace(value))
 
 	if err != nil {
-		return nil, false
+		return nil, fmt.Errorf("could not parse integer item: %v", err)
 	}
 
-	return NewInteger(v), true
+	return NewInteger(v), nil
 }
 
 func (i *Integer) Inc() *Integer {
