@@ -34,7 +34,7 @@ func (t *tcp) SetErrors(errors <-chan error) {
 }
 
 func (t *tcp) Start() {
-	t.wg.Add(1)
+	t.wg.Add(2)
 
 	go func() {
 		defer t.wg.Done()
@@ -74,6 +74,10 @@ func (t *tcp) Start() {
 
 func (t *tcp) Output() <-chan string {
 	return t.output
+}
+
+func (t *tcp) Done() <-chan interface{} {
+	return t.done
 }
 
 func (t *tcp) close() {
