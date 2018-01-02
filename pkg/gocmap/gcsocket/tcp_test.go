@@ -1,7 +1,6 @@
 package gcsocket_test
 
 import (
-	"fmt"
 	"net"
 	"testing"
 	"time"
@@ -12,6 +11,7 @@ import (
 type conn struct {
 	read  []byte
 	write []byte
+	open  bool
 }
 
 func (c *conn) Read(b []byte) (n int, err error) {
@@ -27,6 +27,8 @@ func (c *conn) Write(b []byte) (n int, err error) {
 }
 
 func (c *conn) Close() error {
+	c.open = false
+
 	return nil
 }
 
@@ -50,59 +52,42 @@ func (c *conn) SetWriteDeadline(t time.Time) error {
 	return nil
 }
 
-func newConn() *conn {
-	return &conn{
-		read:  []byte("read string"),
-		write: make([]byte, 12),
+func TestRead(t *testing.T) {
+	expected := "read string"
+
+	c := &conn{read: []byte("read string")}
+
+	s := gcsocket.TCP(c)
+	defer s.Close()
+
+	if sCmd, _ := s.Read(); sCmd != "read string" {
+		t.Errorf("expected %v, got", expected)
 	}
 }
 
-func TestTCPOutput(t *testing.T) {
-	conn := newConn()
+func TestWrite(t *testing.T) {
+	expected := "write string"
 
-	tcp := gcsocket.TCP(conn)
+	c := &conn{write: make([]byte, len(expected))}
 
-	tcp.Start()
+	s := gcsocket.TCP(c)
+	defer s.Close()
 
-	out := <-tcp.Output()
+	s.Write(expected)
 
-	if out != "read string" {
-		t.Errorf("expected to put read string into output channel, got: %v", out)
+	if string(c.write) != expected {
+		t.Errorf("expected %v, got", expected)
 	}
 }
 
-func TestTCPInput(t *testing.T) {
-	conn := newConn()
+func TestClose(t *testing.T) {
+	c := &conn{}
 
-	tcp := gcsocket.TCP(conn)
+	s := gcsocket.TCP(c)
 
-	in := make(chan string)
-	defer close(in)
+	s.Close()
 
-	tcp.SetInput(in)
-	tcp.Start()
-
-	in <- "write string"
-
-	if string(conn.write) != "write string" {
-		t.Errorf("expected to write output string into channel, got written: %v", string(conn.write))
-	}
-}
-
-func TestTCPError(t *testing.T) {
-	conn := newConn()
-
-	tcp := gcsocket.TCP(conn)
-
-	err := make(chan error)
-	defer close(err)
-
-	tcp.SetErrors(err)
-	tcp.Start()
-
-	err <- fmt.Errorf("error string")
-
-	if string(conn.write) != "error string" {
-		t.Errorf("expected to write error string into channel, got written: %v", string(conn.write))
+	if c.open {
+		t.Errorf("expected connection to be closed")
 	}
 }
