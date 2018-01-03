@@ -40,3 +40,7 @@ func (t *tcp) Write(s string) error {
 
 	return nil
 }
+
+func (t *tcp) Error(e error) error {
+	return t.Write(fmt.Sprintf("error: %v", e))
+}

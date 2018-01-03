@@ -1,6 +1,7 @@
 package gcsocket_test
 
 import (
+	"fmt"
 	"net"
 	"testing"
 	"time"
@@ -76,7 +77,22 @@ func TestWrite(t *testing.T) {
 	s.Write(expected)
 
 	if string(c.write) != expected {
-		t.Errorf("expected %v, got", expected)
+		t.Errorf("expected '%v', got: '%v'", expected, c.write)
+	}
+}
+
+func TestError(t *testing.T) {
+	expected := fmt.Errorf("write string")
+
+	c := &conn{write: make([]byte, len(expected.Error())+len("error: "))}
+
+	s := gcsocket.TCP(c)
+	defer s.Close()
+
+	s.Error(expected)
+
+	if string(c.write) != fmt.Sprintf("error: %v", expected) {
+		t.Errorf("expected '%v', got: '%v'", fmt.Sprintf("error: %v", expected), c.write)
 	}
 }
 
