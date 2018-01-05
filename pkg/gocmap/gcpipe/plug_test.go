@@ -1,6 +1,7 @@
 package gcpipe_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/vprokopchuk256/gocache/pkg/gocmap/gcpipe"
@@ -39,40 +40,49 @@ func (s *socket) Close() {
 }
 
 func TestPlugSuccess(t *testing.T) {
-	expected := "out string"
+	socketOutStr := "socket out str"
+	plugInStr := "plug in str"
+	plugInChan := make(chan string)
 
-	s := &socket{read: expected}
+	s := &socket{read: socketOutStr}
 
 	p := gcpipe.Plug(s)
+	p.SetInput(plugInChan)
 	p.Start()
 
-	got := <-p.Output()
+	plugOutStr := <-p.Output()
 
-	if got != expected {
-		t.Errorf("Expected '%v', got: '%v'", expected, got)
+	plugInChan <- plugInStr
+
+	p.Close()
+
+	if plugOutStr != socketOutStr {
+		t.Errorf("expected '%v', got: '%v'", socketOutStr, plugOutStr)
+	}
+
+	if s.write != plugInStr {
+		t.Errorf("expected '%v', got: '%v'", plugInStr, s.write)
 	}
 }
 
-// func TestPlugOutputError(t *testing.T) {
-// 	s := &socket{readErr: fmt.Errorf("error")}
+func TestPlugError(t *testing.T) {
+	socketOutStr := "socket out str"
+	plugInErr := fmt.Errorf("error")
+	plugInErrChan := make(chan error)
 
-// 	p := gcpipe.Plug(s)
-// 	p.Start()
+	s := &socket{read: socketOutStr}
 
-// 	<-p.Done()
-// }
+	p := gcpipe.Plug(s)
+	p.SetErrors(plugInErrChan)
+	p.Start()
 
-// func TestPlugInput(t *testing.T) {
-// 	expected := "in string"
+	<-p.Output()
 
-// 	s := &socket{}
+	plugInErrChan <- plugInErr
 
-// 	p := gcpipe.Plug(s)
-// 	p.Start()
+	p.Close()
 
-// 	p.Input() <- expected
-
-// 	if s.write != expected {
-// 		t.Errorf("Expected '%v', got: '%v'", expected, s.write)
-// 	}
-// }
+	if s.err != plugInErr {
+		t.Errorf("expected '%v', got: '%v'", plugInErr, s.err)
+	}
+}

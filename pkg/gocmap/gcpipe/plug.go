@@ -10,6 +10,7 @@ type plug struct {
 	socket gcsocket.Socket
 	output chan string
 	input  <-chan string
+	errors <-chan error
 	done   chan interface{}
 	wg     sync.WaitGroup
 }
@@ -26,8 +27,12 @@ func (p *plug) Output() <-chan string {
 	return p.output
 }
 
-func (p *plug) Input() chan<- string {
-	return p.output
+func (p *plug) SetInput(input <-chan string) {
+	p.input = input
+}
+
+func (p *plug) SetErrors(errors <-chan error) {
+	p.errors = errors
 }
 
 func (p *plug) Done() <-chan interface{} {
@@ -35,23 +40,51 @@ func (p *plug) Done() <-chan interface{} {
 }
 
 func (p *plug) Start() {
+	p.wg.Add(1)
+
 	go func() {
-		defer p.close()
+		defer p.wg.Done()
 
 		for {
 			sCmd, err := p.socket.Read()
 
 			if err != nil {
-				return
+				go p.Close()
+				break
 			}
 
-			p.output <- sCmd
+		Out:
+			for {
+				select {
+				case p.output <- sCmd:
+					break Out
+				case <-p.done:
+					return
+				}
+			}
+
+		In:
+			for {
+				select {
+				case in := <-p.input:
+					p.socket.Write(in)
+					break In
+				case err := <-p.errors:
+					p.socket.Error(err)
+					break In
+				case <-p.done:
+					return
+				}
+			}
 		}
 	}()
 }
 
-func (p *plug) close() {
+func (p *plug) Close() {
 	close(p.done)
+
+	p.wg.Wait()
+
 	close(p.output)
 	p.socket.Close()
 }
