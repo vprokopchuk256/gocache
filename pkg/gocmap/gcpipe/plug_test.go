@@ -5,46 +5,15 @@ import (
 	"testing"
 
 	"github.com/vprokopchuk256/gocache/pkg/gocmap/gcpipe"
+	"github.com/vprokopchuk256/gocache/pkg/gocmap/sockettest"
 )
-
-type socket struct {
-	write   string
-	read    string
-	err     error
-	readErr error
-	open    bool
-}
-
-func (s *socket) Read() (string, error) {
-	if s.readErr != nil {
-		return "", s.readErr
-	}
-
-	return s.read, nil
-}
-
-func (s *socket) Write(w string) error {
-	s.write = w
-
-	return nil
-}
-
-func (s *socket) Error(err error) error {
-	s.err = err
-
-	return nil
-}
-
-func (s *socket) Close() {
-	s.open = false
-}
 
 func TestPlugSuccess(t *testing.T) {
 	socketOutStr := "socket out str"
 	plugInStr := "plug in str"
 	plugInChan := make(chan string)
 
-	s := &socket{read: socketOutStr}
+	s := &sockettest.Socket{ReadData: socketOutStr}
 
 	p := gcpipe.Plug(s)
 	p.SetInput(plugInChan)
@@ -60,8 +29,8 @@ func TestPlugSuccess(t *testing.T) {
 		t.Errorf("expected '%v', got: '%v'", socketOutStr, plugOutStr)
 	}
 
-	if s.write != plugInStr {
-		t.Errorf("expected '%v', got: '%v'", plugInStr, s.write)
+	if s.WriteData != plugInStr {
+		t.Errorf("expected '%v', got: '%v'", plugInStr, s.WriteData)
 	}
 }
 
@@ -70,7 +39,7 @@ func TestPlugError(t *testing.T) {
 	plugInErr := fmt.Errorf("error")
 	plugInErrChan := make(chan error)
 
-	s := &socket{read: socketOutStr}
+	s := &sockettest.Socket{ReadData: socketOutStr}
 
 	p := gcpipe.Plug(s)
 	p.SetErrors(plugInErrChan)
@@ -82,7 +51,7 @@ func TestPlugError(t *testing.T) {
 
 	p.Close()
 
-	if s.err != plugInErr {
-		t.Errorf("expected '%v', got: '%v'", plugInErr, s.err)
+	if s.ErrData != plugInErr {
+		t.Errorf("expected '%v', got: '%v'", plugInErr, s.ErrData)
 	}
 }
