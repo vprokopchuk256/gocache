@@ -1,43 +1,48 @@
 package gcpipe_test
 
-// func TestPipeSuccess(t *testing.T) {
-// 	m := gcmap.New()
-// 	s := &sockettest.Socket{ReadData: "ins key 10"}
-// 	defer s.Close()
+import (
+	"testing"
 
-// 	gcpipe.Pipe(m, s)
+	"github.com/vprokopchuk256/gocache/pkg/gocmap/gcmap"
+	"github.com/vprokopchuk256/gocache/pkg/gocmap/gcpipe"
+	"github.com/vprokopchuk256/gocache/pkg/gocmap/gctest"
+)
 
-// 	log := <-s.input
+func TestPipeSuccess(t *testing.T) {
+	m := gcmap.New()
+	s := gctest.SocketData("ins key 10")
 
-// 	// 	if log != "key := (integer) 10" {
-// 	// 		t.Errorf("expected log to be correct, got: %v", log)
-// 	// 	}
-// }
+	gcpipe.Pipe(m, s)
 
-// func TestPipeParsingError(t *testing.T) {
-// 	m := gcmap.New()
-// 	s := newSocket("some undefined command")
-// 	defer s.close()
+	log := s.WaitForOutput()
 
-// 	gcpipe.Pipe(m, s)
+	if log != "key := (integer) 10" {
+		t.Errorf("expected log to be correct, got: %v", log)
+	}
+}
 
-// 	err := <-s.errors
+func TestPipeParsingError(t *testing.T) {
+	m := gcmap.New()
+	s := gctest.SocketData("some unknown command")
 
-// 	if err == nil {
-// 		t.Errorf("expected error to be returned")
-// 	}
-// }
+	gcpipe.Pipe(m, s)
 
-// func TestPipeOperationError(t *testing.T) {
-// 	m := gcmap.New()
-// 	s := newSocket("inc key")
-// 	defer s.close()
+	err := s.WaitForError()
 
-// 	gcpipe.Pipe(m, s)
+	if err == nil {
+		t.Errorf("expected error to be returned")
+	}
+}
 
-// 	err := <-s.errors
+func TestPipeOperationError(t *testing.T) {
+	m := gcmap.New()
+	s := gctest.SocketData("inc key")
 
-// 	if err == nil {
-// 		t.Errorf("expected error to be returned")
-// 	}
-// }
+	gcpipe.Pipe(m, s)
+
+	err := s.WaitForError()
+
+	if err == nil {
+		t.Errorf("expected error to be returned")
+	}
+}

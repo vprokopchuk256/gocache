@@ -6,17 +6,20 @@ import (
 )
 
 func Pipe(m *gcmap.Map, s gcsocket.Socket) {
-	// //parser
-	// cmds, parserErrors := Parser(s.Done(), s.Output())
+	//plug
+	p := Plug(s)
 
-	// //executor
-	// logs, executorErrors := Executor(m, s.Done(), cmds)
-	// s.SetInput(logs)
+	//parser
+	cmds, parserErrors := Parser(p.Done(), p.Output())
 
-	// //errors multiplexer
-	// errors := Multiplexer(s.Done(), parserErrors, executorErrors)
-	// s.SetErrors(errors)
+	//executor
+	logs, executorErrors := Executor(m, p.Done(), cmds)
+	p.SetInput(logs)
 
-	// //start
-	// s.Start()
+	//errors multiplexer
+	errors := Multiplexer(p.Done(), parserErrors, executorErrors)
+	p.SetErrors(errors)
+
+	//start
+	p.Start()
 }
