@@ -5,41 +5,40 @@ import (
 	"testing"
 
 	"github.com/vprokopchuk256/gocache/pkg/gocmap/gcpipe"
-	"github.com/vprokopchuk256/gocache/pkg/gocmap/sockettest"
+	"github.com/vprokopchuk256/gocache/pkg/gocmap/gctest"
 )
 
 func TestPlugSuccess(t *testing.T) {
-	socketOutStr := "socket out str"
+	socketData := "socket out str"
 	plugInStr := "plug in str"
 	plugInChan := make(chan string)
 
-	s := &sockettest.Socket{ReadData: socketOutStr}
+	s := gctest.SocketData(socketData)
 
 	p := gcpipe.Plug(s)
 	p.SetInput(plugInChan)
 	p.Start()
 
 	plugOutStr := <-p.Output()
-
 	plugInChan <- plugInStr
 
-	p.Close()
+	socketInData := s.WaitForOutput()
 
-	if plugOutStr != socketOutStr {
-		t.Errorf("expected '%v', got: '%v'", socketOutStr, plugOutStr)
+	if plugOutStr != socketData {
+		t.Errorf("expected '%v', got: '%v'", socketData, plugOutStr)
 	}
 
-	if s.WriteData != plugInStr {
-		t.Errorf("expected '%v', got: '%v'", plugInStr, s.WriteData)
+	if socketInData != plugInStr {
+		t.Errorf("expected '%v', got: '%v'", plugInStr, socketInData)
 	}
 }
 
 func TestPlugError(t *testing.T) {
-	socketOutStr := "socket out str"
+	socketData := "socket out str"
 	plugInErr := fmt.Errorf("error")
 	plugInErrChan := make(chan error)
 
-	s := &sockettest.Socket{ReadData: socketOutStr}
+	s := gctest.SocketData(socketData)
 
 	p := gcpipe.Plug(s)
 	p.SetErrors(plugInErrChan)
@@ -49,9 +48,9 @@ func TestPlugError(t *testing.T) {
 
 	plugInErrChan <- plugInErr
 
-	p.Close()
+	socketInError := s.WaitForError()
 
-	if s.ErrData != plugInErr {
-		t.Errorf("expected '%v', got: '%v'", plugInErr, s.ErrData)
+	if socketInError != plugInErr {
+		t.Errorf("expected '%v', got: '%v'", plugInErr, socketInError)
 	}
 }
