@@ -17,6 +17,7 @@ func main() {
 	shell.Println("GoCache interactive client")
 
 	cmds(shell, [][]string{
+		[]string{"get", "gets value with the specified key"},
 		[]string{"ins", "insert value into the cache"},
 		[]string{"inc", "increase value with the specified key"},
 	})

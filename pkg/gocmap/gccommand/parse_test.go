@@ -47,3 +47,21 @@ func TestParseValidInc(t *testing.T) {
 		t.Error("Expected parsed key")
 	}
 }
+
+func TestParseValidGet(t *testing.T) {
+	c, err := gccommand.Parse("get key")
+
+	if err != nil {
+		t.Fatalf("Expected get command to be parsed without errors")
+	}
+
+	ins, succ := c.(*gccommand.Get)
+
+	if !succ {
+		t.Error("Expected get command")
+	}
+
+	if ins.Key() != "key" {
+		t.Error("Expected parsed key")
+	}
+}

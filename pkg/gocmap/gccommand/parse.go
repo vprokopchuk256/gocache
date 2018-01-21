@@ -8,6 +8,7 @@ import (
 var parsers = map[string](func(string) (Command, error)){
 	"ins": ParseInsert,
 	"inc": ParseInc,
+	"get": ParseGet,
 }
 
 func Parse(sCmd string) (Command, error) {
