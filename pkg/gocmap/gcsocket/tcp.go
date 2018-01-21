@@ -32,7 +32,7 @@ func (t *tcp) Read() (string, error) {
 }
 
 func (t *tcp) Write(s string) error {
-	_, err := t.conn.Write([]byte(s))
+	_, err := t.conn.Write([]byte(fmt.Sprintf("%v\n", s)))
 
 	if err != nil {
 		return fmt.Errorf("could not write data to the socket: %v", err)
@@ -42,5 +42,5 @@ func (t *tcp) Write(s string) error {
 }
 
 func (t *tcp) Error(e error) error {
-	return t.Write(fmt.Sprintf("error: %v", e))
+	return t.Write(fmt.Sprintf("error: %v\n", e))
 }
