@@ -8,6 +8,8 @@ import (
 
 type Item interface {
 	gclockable.Lockable
+	ExpireIn() int
+	SetExpireIn(int)
 	Value() string
 	fmt.Stringer
 }
