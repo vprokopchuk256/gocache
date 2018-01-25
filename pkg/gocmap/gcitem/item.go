@@ -9,6 +9,7 @@ import (
 type Item interface {
 	gclockable.Lockable
 	ExpireIn() int
+	Expired() bool
 	SetExpireIn(int)
 	Value() string
 	fmt.Stringer

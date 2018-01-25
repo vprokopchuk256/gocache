@@ -21,6 +21,10 @@ func (m *Map) Set(key string, i gcitem.Item) {
 func (m *Map) Get(key string) (i gcitem.Item, ok bool) {
 	item, ok := m.mp[key]
 
+	if ok && item.Expired() {
+		return nil, false
+	}
+
 	return item, ok
 }
 

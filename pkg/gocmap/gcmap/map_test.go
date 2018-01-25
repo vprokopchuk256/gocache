@@ -16,11 +16,25 @@ func TestGetExistingKey(t *testing.T) {
 	i, ok := m.Get("key")
 
 	if !ok {
-		t.Error("Non existing item should not be detected")
+		t.Error("Existing item should be detected")
 	}
 
 	if i != item {
 		t.Error("Existing item should be returned")
+	}
+}
+
+func TestGetExistingExpiredKey(t *testing.T) {
+	m := gcmap.New()
+	item := gcitem.NewInteger(10)
+	item.SetExpireIn(0)
+
+	m.Set("key", item)
+
+	_, ok := m.Get("key")
+
+	if ok {
+		t.Error("Expired item should be detected")
 	}
 }
 
