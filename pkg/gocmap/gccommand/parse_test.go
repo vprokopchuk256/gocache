@@ -7,20 +7,10 @@ import (
 )
 
 func TestParseValidIns(t *testing.T) {
-	c, err := gccommand.Parse("ins key 10")
+	_, err := gccommand.Parse("ins key 10")
 
 	if err != nil {
 		t.Fatalf("Expected ins command to be parsed without errors, but got", err)
-	}
-
-	ins, succ := c.(*gccommand.Insert)
-
-	if !succ {
-		t.Error("Expected insert command")
-	}
-
-	if ins.Key() != "key" {
-		t.Error("Expected parsed key")
 	}
 }
 
@@ -31,37 +21,17 @@ func TestParseInvalidIns(t *testing.T) {
 }
 
 func TestParseValidInc(t *testing.T) {
-	c, err := gccommand.Parse("inc key")
+	_, err := gccommand.Parse("inc key")
 
 	if err != nil {
 		t.Fatalf("Expected inc command to be parsed without errors")
 	}
-
-	ins, succ := c.(*gccommand.Inc)
-
-	if !succ {
-		t.Error("Expected inc command")
-	}
-
-	if ins.Key() != "key" {
-		t.Error("Expected parsed key")
-	}
 }
 
 func TestParseValidGet(t *testing.T) {
-	c, err := gccommand.Parse("get key")
+	_, err := gccommand.Parse("get key")
 
 	if err != nil {
 		t.Fatalf("Expected get command to be parsed without errors")
-	}
-
-	ins, succ := c.(*gccommand.Get)
-
-	if !succ {
-		t.Error("Expected get command")
-	}
-
-	if ins.Key() != "key" {
-		t.Error("Expected parsed key")
 	}
 }

@@ -8,44 +8,19 @@ import (
 	"github.com/vprokopchuk256/gocache/pkg/gocmap/gcmap"
 )
 
-func TestNewInc(t *testing.T) {
-	c, err := gccommand.NewInc("key")
+func TestIncFExecWithExistingIntegerKey(t *testing.T) {
+	m := gcmap.New()
+	i := gcitem.NewInteger(10)
 
-	if err != nil {
-		t.Fatalf("inc construction always correct")
-	}
+	m.Set("key", i)
 
-	if c.Key() != "key" {
-		t.Fatalf("key should be set properly")
-	}
-}
-
-func TestParseInc(t *testing.T) {
-	c, err := gccommand.ParseInc("key")
+	c, err := gccommand.Inc("key")
 
 	if err != nil {
 		t.Fatalf("inc parsing always correct")
 	}
 
-	inc, ok := c.(*gccommand.Inc)
-
-	if !ok {
-		t.Fatalf("inc command is expected")
-	}
-
-	if inc.Key() != "key" {
-		t.Fatalf("key should be set properly")
-	}
-}
-
-func TestIncExecWithExistingIntegerKey(t *testing.T) {
-	m := gcmap.New()
-	c, _ := gccommand.NewInc("key")
-	i := gcitem.NewInteger(10)
-
-	m.Set("key", i)
-
-	log, ok := c.Exec(m)
+	log, ok := c(m)
 
 	if ok != nil {
 		t.Fatalf("integer value should be treated without errors")

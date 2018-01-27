@@ -5,10 +5,12 @@ import (
 	"strings"
 )
 
-var parsers = map[string](func(string) (Command, error)){
-	"ins": ParseInsert,
-	"inc": ParseInc,
-	"get": ParseGet,
+type parser func(string) (Command, error)
+
+var parsers = map[string]parser{
+	"ins": Insert,
+	"inc": Inc,
+	"get": Get,
 }
 
 func Parse(sCmd string) (Command, error) {

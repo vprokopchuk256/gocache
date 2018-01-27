@@ -3,7 +3,6 @@ package gcpipe_test
 import (
 	"testing"
 
-	"github.com/vprokopchuk256/gocache/pkg/gocmap/gccommand"
 	"github.com/vprokopchuk256/gocache/pkg/gocmap/gcpipe"
 )
 
@@ -22,13 +21,7 @@ func TestParserValidCommand(t *testing.T) {
 	}()
 
 	<-done
-	c := <-output
-
-	_, ok := c.(*gccommand.Insert)
-
-	if !ok {
-		t.Fatalf("error is not expected")
-	}
+	<-output
 }
 
 func TestParserInvalidCommand(t *testing.T) {

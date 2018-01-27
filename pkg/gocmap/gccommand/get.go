@@ -6,27 +6,15 @@ import (
 	"github.com/vprokopchuk256/gocache/pkg/gocmap/gcmap"
 )
 
-type Get struct {
-	key string
-}
+func Get(key string) (Command, error) {
+	cmd := func(m *gcmap.Map) (string, error) {
+		m.RLock()
+		defer m.RUnlock()
 
-func NewGet(key string) (*Get, error) {
-	return &Get{key: key}, nil
-}
+		i, _ := m.Get(key)
 
-func ParseGet(key string) (Command, error) {
-	return NewGet(key)
-}
+		return fmt.Sprintf("%v := %v", key, i), nil
+	}
 
-func (c *Get) Key() string {
-	return c.key
-}
-
-func (c *Get) Exec(m *gcmap.Map) (string, error) {
-	m.RLock()
-	defer m.RUnlock()
-
-	i, _ := m.Get(c.key)
-
-	return fmt.Sprintf("%v := %v", c.key, i), nil
+	return cmd, nil
 }

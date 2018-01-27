@@ -20,7 +20,7 @@ func TestExecutorValidCMD(t *testing.T) {
 	output, _ := gcpipe.Executor(m, done, input)
 
 	go func() {
-		ins, _ := gccommand.NewInsert("key", "10")
+		ins, _ := gccommand.Insert("key 10")
 
 		input <- ins
 		done <- true
@@ -46,8 +46,7 @@ func TestExecutorInvalidCMD(t *testing.T) {
 	_, errors := gcpipe.Executor(m, done, input)
 
 	go func() {
-		inc, _ := gccommand.NewInc("key")
-
+		inc, _ := gccommand.Inc("key")
 		input <- inc
 		done <- true
 	}()

@@ -19,7 +19,7 @@ func Executor(m *gcmap.Map, done <-chan interface{}, input <-chan gccommand.Comm
 				return
 			case cmd, ok := <-input:
 				if ok {
-					log, err := cmd.Exec(m)
+					log, err := cmd(m)
 					if err != nil {
 						errors <- err
 					} else {
