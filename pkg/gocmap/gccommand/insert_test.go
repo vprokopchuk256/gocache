@@ -1,6 +1,7 @@
 package gccommand_test
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/vprokopchuk256/gocache/pkg/gocmap/gccommand"
@@ -22,7 +23,7 @@ func TestInsertFInteger(t *testing.T) {
 		t.Fatalf("insert should work correctly")
 	}
 
-	if log != "key := (integer) 15" {
+	if !strings.Contains(log, "(integer) 15") {
 		t.Error("insert should return correct log")
 	}
 

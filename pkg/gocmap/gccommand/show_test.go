@@ -9,16 +9,16 @@ import (
 	"github.com/vprokopchuk256/gocache/pkg/gocmap/gcmap"
 )
 
-func TestIncFExecWithExistingIntegerKey(t *testing.T) {
+func TestShowFExecWithExistingKey(t *testing.T) {
 	m := gcmap.New()
 	i := gcitem.NewInteger(10)
 
 	m.Set("key", i)
 
-	c, err := gccommand.Inc("key")
+	c, ok := gccommand.Show("key")
 
-	if err != nil {
-		t.Fatalf("inc parsing always correct")
+	if ok != nil {
+		t.Fatalf("get parsing always correct")
 	}
 
 	log, ok := c(m)
@@ -27,11 +27,7 @@ func TestIncFExecWithExistingIntegerKey(t *testing.T) {
 		t.Fatalf("integer value should be treated without errors")
 	}
 
-	if !strings.Contains(log, "(integer) 11") {
-		t.Error("inc result should be logged properly")
-	}
-
-	if i.Value() != "11" {
-		t.Error("integer value must be increased")
+	if !strings.Contains(log, "(integer) 10") {
+		t.Error("insert should return correct log")
 	}
 }

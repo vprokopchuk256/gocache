@@ -35,3 +35,11 @@ func TestParseValidGet(t *testing.T) {
 		t.Fatalf("Expected get command to be parsed without errors")
 	}
 }
+
+func TestParseValidShow(t *testing.T) {
+	_, err := gccommand.Parse("show key")
+
+	if err != nil {
+		t.Fatalf("Expected show command to be parsed without errors")
+	}
+}

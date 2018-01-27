@@ -1,6 +1,7 @@
 package gcpipe_test
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/vprokopchuk256/gocache/pkg/gocmap/gccommand"
@@ -29,7 +30,7 @@ func TestExecutorValidCMD(t *testing.T) {
 	<-done
 	log := <-output
 
-	if log != "key := (integer) 10" {
+	if !strings.Contains(log, "key := (integer) 10") {
 		t.Fatalf("expected '' but got '%v'", log)
 	}
 }

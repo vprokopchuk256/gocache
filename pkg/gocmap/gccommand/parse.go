@@ -8,9 +8,10 @@ import (
 type parser func(string) (Command, error)
 
 var parsers = map[string]parser{
-	"ins": Insert,
-	"inc": Inc,
-	"get": Get,
+	"ins":  Insert,
+	"inc":  Inc,
+	"get":  Get,
+	"show": Show,
 }
 
 func Parse(sCmd string) (Command, error) {

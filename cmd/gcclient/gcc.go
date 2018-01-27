@@ -20,6 +20,7 @@ func main() {
 		[]string{"get", "gets value with the specified key"},
 		[]string{"ins", "insert value into the cache"},
 		[]string{"inc", "increase value with the specified key"},
+		[]string{"show", "show value with the specified key"},
 	})
 
 	shell.Run()

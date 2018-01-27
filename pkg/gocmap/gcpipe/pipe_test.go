@@ -1,6 +1,7 @@
 package gcpipe_test
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/vprokopchuk256/gocache/pkg/gocmap/gcmap"
@@ -16,7 +17,7 @@ func TestPipeSuccess(t *testing.T) {
 
 	log := s.WaitForOutput()
 
-	if log != "key := (integer) 10" {
+	if !strings.Contains(log, "key := (integer) 10") {
 		t.Errorf("expected log to be correct, got: %v", log)
 	}
 }

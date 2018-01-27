@@ -1,6 +1,7 @@
 package gcitem_test
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/vprokopchuk256/gocache/pkg/gocmap/gcitem"
@@ -23,7 +24,7 @@ func TestIntegerInc(t *testing.T) {
 }
 
 func TestIntegerShow(t *testing.T) {
-	if i := gcitem.NewInteger(10); i.String() != "(integer) 10" {
+	if i := gcitem.NewInteger(10); !strings.Contains(i.String(), "(integer) 10") {
 		t.Error("Is expected to has correct display value")
 	}
 }

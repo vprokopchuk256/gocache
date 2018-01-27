@@ -36,5 +36,5 @@ func (i *Integer) Value() string {
 }
 
 func (i *Integer) String() string {
-	return fmt.Sprintf("(integer) %v", i.Value())
+	return fmt.Sprintf("(integer) %v, expire in %v msc", i.Value(), i.ExpireIn())
 }
