@@ -26,7 +26,7 @@ func TestGetFExecWithExistingKey(t *testing.T) {
 		t.Fatalf("integer value should be treated without errors")
 	}
 
-	if log != "key := (integer) 10" {
+	if log != "10" {
 		t.Error("get result should be logged properly")
 	}
 }

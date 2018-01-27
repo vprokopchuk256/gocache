@@ -1,8 +1,6 @@
 package gccommand
 
 import (
-	"fmt"
-
 	"github.com/vprokopchuk256/gocache/pkg/gocmap/gcmap"
 )
 
@@ -13,7 +11,7 @@ func Get(key string) (Command, error) {
 
 		i, _ := m.Get(key)
 
-		return fmt.Sprintf("%v := %v", key, i), nil
+		return i.Value(), nil
 	}
 
 	return cmd, nil
