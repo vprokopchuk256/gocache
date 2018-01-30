@@ -12,15 +12,23 @@ type Base struct {
 }
 
 func base() Base {
-	return Base{gclockable.New(), expireAt(1000)}
+	return Base{gclockable.New(), time.Time{}}
 }
 
 func (e *Base) ExpireIn() int {
-	return int(time.Until(e.expireAt).Seconds())
+	if e.Expirable() {
+		return int(time.Until(e.expireAt).Seconds())
+	}
+
+	return int(^uint(0) >> 1)
 }
 
 func (e *Base) Expired() bool {
 	return e.ExpireIn() <= 0
+}
+
+func (e *Base) Expirable() bool {
+	return !e.expireAt.IsZero()
 }
 
 func (e *Base) SetExpireIn(expireIn int) {

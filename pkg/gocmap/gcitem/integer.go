@@ -36,5 +36,10 @@ func (i *Integer) Value() string {
 }
 
 func (i *Integer) String() string {
-	return fmt.Sprintf("(integer) %v, expire in %v msc", i.Value(), i.ExpireIn())
+	suffix := "non expirable"
+	if i.Expirable() {
+		suffix = fmt.Sprintf("expire in %v msc", i.ExpireIn())
+	}
+
+	return fmt.Sprintf("(integer) %v, %v", i.Value(), suffix)
 }
